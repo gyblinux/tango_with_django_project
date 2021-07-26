@@ -19,7 +19,7 @@ from django.urls import include
 from rango import views
 
 urlpatterns = [
-    path('', views.index, name='index'), # (url pattern, function to call, shortname of view) 
+    path('', views.index, name = 'index'), # (url pattern, function to call, shortname of view) 
     path('rango/', include('rango.urls')),
     path('admin/', admin.site.urls),
 ]
