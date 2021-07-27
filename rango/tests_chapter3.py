@@ -1,13 +1,27 @@
-from django.http import response
-from django.test import TestCase
-from django.test import SimpleTestCase
-# Create your tests here.
-# official test
+# 
+# Tango with Django 2 Progress Tests
+# By Leif Azzopardi and David Maxwell
+# With assistance from Enzo Roiz (https://github.com/enzoroiz)
+# 
+# Chapter 3 -- Django Basics
+# Last updated October 3rd, 2019
+# Revising Author: David Maxwell
+# 
+
+#
+# In order to run these tests, copy this module to your tango_with_django_project/rango/ directory.
+# Once this is complete, run $ python manage.py test rango.tests_chapter3
+# 
+# The tests will then be run, and the output displayed -- do you pass them all?
+# 
+# Once you are done with the tests, delete the module. You don't need to put it in your Git repository!
+#
+
 import os
 import importlib
 from django.urls import reverse
+from django.test import TestCase
 from django.conf import settings
-import rango
 
 FAILURE_HEADER = f"{os.linesep}{os.linesep}{os.linesep}================{os.linesep}TwD TEST FAILURE =({os.linesep}================{os.linesep}"
 FAILURE_FOOTER = f"{os.linesep}"
@@ -96,69 +110,69 @@ class Chapter3IndexPageTests(TestCase):
         self.assertTrue(index_mapping_exists, f"{FAILURE_HEADER}The index URL mapping could not be found. Check your PROJECT'S urls.py module.{FAILURE_FOOTER}")
         self.assertEquals(reverse('rango:index'), '/rango/', f"{FAILURE_HEADER}The index URL lookup failed. Check Rango's urls.py module. You're missing something in there.{FAILURE_FOOTER}")
     
-#     def test_response(self):
-#         """
-#         Does the response from the server contain the required string?
-#         """
-#         response = self.client.get(reverse('rango:index'))
+    def test_response(self):
+        """
+        Does the response from the server contain the required string?
+        """
+        response = self.client.get(reverse('rango:index'))
         
-#         self.assertEqual(response.status_code, 200, f"{FAILURE_HEADER}Requesting the index page failed. Check your URLs and view.{FAILURE_FOOTER}")
-#         self.assertContains(response, "Rango says hey there partner!", msg_prefix=f"{FAILURE_HEADER}The index view does not return the expected response. Be careful you haven't missed any punctuation, and that your cAsEs are correct.{FAILURE_FOOTER}")
+        self.assertEqual(response.status_code, 200, f"{FAILURE_HEADER}Requesting the index page failed. Check your URLs and view.{FAILURE_FOOTER}")
+        self.assertContains(response, "Rango says hey there partner!", msg_prefix=f"{FAILURE_HEADER}The index view does not return the expected response. Be careful you haven't missed any punctuation, and that your cAsEs are correct.{FAILURE_FOOTER}")
     
-#     def test_for_about_hyperlink(self):
-#         """
-#         Does the response contain the about hyperlink required in the exercise?
-#         Checks for both single and double quotes in the attribute. Both are acceptable.
-#         """
-#         response = self.client.get(reverse('rango:index'))
+    def test_for_about_hyperlink(self):
+        """
+        Does the response contain the about hyperlink required in the exercise?
+        Checks for both single and double quotes in the attribute. Both are acceptable.
+        """
+        response = self.client.get(reverse('rango:index'))
         
-#         single_quotes_check = '<a href=\'/rango/about/\'>About</a>' in response.content.decode() or '<a href=\'/rango/about\'>About</a>' in response.content.decode() 
-#         double_quotes_check = '<a href="/rango/about/">About</a>' in response.content.decode() or '<a href="/rango/about">About</a>' in response.content.decode()
+        single_quotes_check = '<a href=\'/rango/about/\'>About</a>' in response.content.decode() or '<a href=\'/rango/about\'>About</a>' in response.content.decode() 
+        double_quotes_check = '<a href="/rango/about/">About</a>' in response.content.decode() or '<a href="/rango/about">About</a>' in response.content.decode()
         
-#         self.assertTrue(single_quotes_check or double_quotes_check, f"{FAILURE_HEADER}We couldn't find the hyperlink to the /rango/about/ URL in your index page. Check that it appears EXACTLY as in the book.{FAILURE_FOOTER}")
+        self.assertTrue(single_quotes_check or double_quotes_check, f"{FAILURE_HEADER}We couldn't find the hyperlink to the /rango/about/ URL in your index page. Check that it appears EXACTLY as in the book.{FAILURE_FOOTER}")
 
-# class Chapter3AboutPageTests(TestCase):
-#     """
-#     Tests to check the about view.
-#     We check whether the view exists, the mapping is correct, and the response is correct.
-#     """
-#     def setUp(self):
-#         self.views_module = importlib.import_module('rango.views')
-#         self.views_module_listing = dir(self.views_module)
+class Chapter3AboutPageTests(TestCase):
+    """
+    Tests to check the about view.
+    We check whether the view exists, the mapping is correct, and the response is correct.
+    """
+    def setUp(self):
+        self.views_module = importlib.import_module('rango.views')
+        self.views_module_listing = dir(self.views_module)
     
-#     def test_view_exists(self):
-#         """
-#         Does the about() view exist in Rango's views.py module?
-#         """
-#         name_exists = 'about' in self.views_module_listing
-#         is_callable = callable(self.views_module.about)
+    def test_view_exists(self):
+        """
+        Does the about() view exist in Rango's views.py module?
+        """
+        name_exists = 'about' in self.views_module_listing
+        is_callable = callable(self.views_module.about)
         
-#         self.assertTrue(name_exists, f"{FAILURE_HEADER}We couldn't find the view for your about view! It should be called about().{FAILURE_FOOTER}")
-#         self.assertTrue(is_callable, f"{FAILURE_HEADER}Check you have defined your about() view correctly. We can't execute it.{FAILURE_FOOTER}")
+        self.assertTrue(name_exists, f"{FAILURE_HEADER}We couldn't find the view for your about view! It should be called about().{FAILURE_FOOTER}")
+        self.assertTrue(is_callable, f"{FAILURE_HEADER}Check you have defined your about() view correctly. We can't execute it.{FAILURE_FOOTER}")
     
-#     def test_mapping_exists(self):
-#         """
-#         Checks whether the about view has the correct URL mapping.
-#         """
-#         self.assertEquals(reverse('rango:about'), '/rango/about/', f"{FAILURE_HEADER}Your about URL mapping is either missing or mistyped.{FAILURE_FOOTER}")
+    def test_mapping_exists(self):
+        """
+        Checks whether the about view has the correct URL mapping.
+        """
+        self.assertEquals(reverse('rango:about'), '/rango/about/', f"{FAILURE_HEADER}Your about URL mapping is either missing or mistyped.{FAILURE_FOOTER}")
     
-#     def test_response(self):
-#         """
-#         Checks whether the view returns the required string to the client.
-#         """
-#         response = self.client.get(reverse('rango:about'))
+    def test_response(self):
+        """
+        Checks whether the view returns the required string to the client.
+        """
+        response = self.client.get(reverse('rango:about'))
         
-#         self.assertEqual(response.status_code, 200, f"{FAILURE_HEADER}When requesting the about view, the server did not respond correctly. Is everything correct in your URL mappings and the view?{FAILURE_FOOTER}")
-#         self.assertContains(response, "Rango says here is the about page.", msg_prefix=f"{FAILURE_HEADER}The about view did not respond with the expected message. Check that the message matches EXACTLY with what is requested of you in the book.{FAILURE_FOOTER}")
+        self.assertEqual(response.status_code, 200, f"{FAILURE_HEADER}When requesting the about view, the server did not respond correctly. Is everything correct in your URL mappings and the view?{FAILURE_FOOTER}")
+        self.assertContains(response, "Rango says here is the about page.", msg_prefix=f"{FAILURE_HEADER}The about view did not respond with the expected message. Check that the message matches EXACTLY with what is requested of you in the book.{FAILURE_FOOTER}")
     
-#     def test_for_index_hyperlink(self):
-#         """
-#         Does the response contain the index hyperlink required in the exercise?
-#         Checks for both single and double quotes in the attribute. Both are acceptable.
-#         """
-#         response = self.client.get(reverse('rango:about'))
+    def test_for_index_hyperlink(self):
+        """
+        Does the response contain the index hyperlink required in the exercise?
+        Checks for both single and double quotes in the attribute. Both are acceptable.
+        """
+        response = self.client.get(reverse('rango:about'))
         
-#         single_quotes_check = '<a href=\'/rango/\'>Index</a>' in response.content.decode()
-#         double_quotes_check = '<a href="/rango/">Index</a>' in response.content.decode()
+        single_quotes_check = '<a href=\'/rango/\'>Index</a>' in response.content.decode()
+        double_quotes_check = '<a href="/rango/">Index</a>' in response.content.decode()
         
-#         self.assertTrue(single_quotes_check or double_quotes_check, f"{FAILURE_HEADER}We could not find a hyperlink back to the index page in your about view. Check your about.html template, and try again.{FAILURE_FOOTER}")
+        self.assertTrue(single_quotes_check or double_quotes_check, f"{FAILURE_HEADER}We could not find a hyperlink back to the index page in your about view. Check your about.html template, and try again.{FAILURE_FOOTER}")
