@@ -19,6 +19,9 @@
             {% else %}
             <strong>No pages currently in category.</strong>
             {% endif %}
+
+            <!--C7 exercise: make sure add page link only exists when category exists-->
+            <a href="/rango/category/{{ category.slug }}/add_page/">Add Page</a><br />
         {% else %}
             The specified category does not exist!
         {% endif %}
