@@ -5,10 +5,35 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from datetime import datetime
 
 from rango.models import Page, Category
 from rango.forms import PageForm, CategoryForm
 from rango.forms import UserForm, UserProfileForm
+
+# A helper method
+def get_server_side_cookie(request, cookie, default_val=None):
+    val = request.session.get(cookie)
+    if not val:
+        val = default_val
+    return val
+
+# Updated the function definition
+def visitor_cookie_handler(request):
+    visits = int(get_server_side_cookie(request, 'visits', '1'))
+    last_visit_cookie = get_server_side_cookie(request, 'last_visit', str(datetime.now()))
+    last_visit_time = datetime.strptime(last_visit_cookie[:-7], '%Y-%m-%d %H:%M:%S')
+    # If it's been more than a day since the last visit...
+    if (datetime.now() - last_visit_time).days > 0:
+        visits = visits + 1
+        # Update the last visit cookie now that we have updated the count
+        request.session['last_visit'] = str(datetime.now())
+    else:
+        # Set the last visit cookie
+        request.session['last_visit'] = last_visit_cookie
+    
+    # Update/set the visits cookie
+    request.session['visits'] = visits
 
 # Create your views here.
 def index(request):
@@ -21,13 +46,26 @@ def index(request):
         'boldmessage': 'Crunchy, creamy, cookie, candy, cupcake!', # chapter 3 output
         'categories' : category_list,
         'pages': page_list,
+        # 'visits': int(request.COOKIES.get('visits', '1'))
     }
     
-    return render(request, 'rango/index.html', context_dict)
+    visitor_cookie_handler(request)
+    # context_dict['visits'] = request.session['visits']
+
+    response =  render(request, 'rango/index.html', context_dict)
+    return response
 
 def about(request):
     # return HttpResponse("Rango says here is the about page. <br/> <a href='/rango/'>Index</a>") # chapter3 evidence
-    return render(request, 'rango/about.html')
+    # c10
+    # if (request.session.test_cookie_worked()):
+    #     print("TEST COOKIE WORKED!")
+    #     request.session.delete_test_cookie()
+
+    # c10 exercise
+    visitor_cookie_handler(request)
+    context_dict = {'visits': request.session['visits']}
+    return render(request, 'rango/about.html', context_dict)
 
 def show_category(request, category_name_slug):
     context_dict = {}
